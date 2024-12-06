@@ -1,3 +1,8 @@
+using Ecommerce.Configurations;
+using Ecommerce.Repositories.Implementation;
+using Ecommerce.Repositories.Interface;
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+//Config MongoDB
+builder.Services.Configure<DatabaseConfig>(builder.Configuration.GetSection(nameof(DatabaseConfig)));
+builder.Services.AddSingleton<IDatabaseConfig>(sp => sp.GetRequiredService<IOptions<DatabaseConfig>>().Value);
+
+//Injeção de Dependencias
+builder.Services.AddSingleton<IUsuariosRepository, UsuariosRepository>();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
